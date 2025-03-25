@@ -1,0 +1,51 @@
+---
+- hosts: all
+  connection: ssh
+  become: yes
+  tasks:
+    - name: Install dependencies (OpenJDK & wget)
+      apt:
+        name: 
+          - openjdk-17-jdk
+          - wget
+        state: present
+
+    - name: Download Tomcat 9.0.58
+      get_url:
+        url: https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.58/bin/apache-tomcat-9.0.58.tar.gz
+        dest: /root/apache-tomcat-9.0.58.tar.gz
+
+    - name: Extract Tomcat archive to /opt
+      unarchive:
+        src: /root/apache-tomcat-9.0.58.tar.gz
+        dest: /opt
+        remote_src: yes
+
+    - name: Set correct permissions for Tomcat directory
+      file:
+        path: /opt/apache-tomcat-9.0.58
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Copy `context.xml` to `/opt/apache-tomcat-9.0.58/webapps/manager/META-INF/`
+      copy:
+        src: /opt/apache-tomcat-9.0.58/webapps/manager/META-INF/context.xml
+        dest: /root/apache-tomcat-9.0.58/webapps/manager/META-INF/context.xml
+        owner: root
+        group: root
+        mode: '0644'
+        backup: yes
+
+    - name: Copy `tomcat-users.xml` to `/opt/apache-tomcat-9.0.58/conf/`
+      copy:
+        src: /opt/apache-tomcat-9.0.58/conf/tomcat-users.xml
+        dest: /root/apache-tomcat-9.0.58/conf/tomcat-users.xml
+        owner: root
+        group: root
+        mode: '0644'
+        backup: yes
+
+    - name: Start Tomcat
+      shell: /opt/apache-tomcat-9.0.58/bin/startup.sh
