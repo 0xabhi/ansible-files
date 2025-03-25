@@ -1,0 +1,26 @@
+---
+- name: Simple Example Playbook
+  hosts: localhost
+  tasks:
+    - name: Install a package
+      apt:
+        name: curl
+        state: present
+      tags: install_package  # Tag added to this task
+
+    - name: Create a directory
+      file:
+        path: /tmp/mydir
+        state: directory
+      tags: create_directory  # Tag added to this task
+
+    - name: Create a file
+      file:
+        path: /tmp/mydir/myfile.txt
+        state: touch
+      tags: create_file  # Tag added to this task
+
+
+      ansible-playbook example_playbook.yml --tags install_package
+
+so we can run only specific taks or ignore specific tasks with the help of tags
