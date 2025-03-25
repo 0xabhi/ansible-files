@@ -1,0 +1,25 @@
+---
+- name: Simple Example Playbook
+  hosts: localhost
+  tasks:
+    - name: Install a package
+      apt:
+        name: curl
+        state: present
+
+    - name: Create a directory
+      file:
+        path: /tmp/mydir
+        state: directory
+
+    - name: Create a file
+      file:
+        path: /tmp/mydir/myfile.txt
+        state: touch
+
+root@ip-10-0-1-145:/# ansible-playbook file1.yml --start-at-task="Create a directory"
+
+
+so in the above playbook the tasks will execute from the second task i.e form " Create a direcroty " 
+
+it will ignore the first task i.e install a package
